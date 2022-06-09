@@ -1,0 +1,788 @@
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on FIELD_DEFINITION | OBJECT | INTERFACE
+type Allergen {
+  id: ID!
+  name: String!
+}
+
+input BrowsingFiltersInput {
+  locationTypeId: ID
+  locationCuisineTypeId: ID
+  dishTypeId: ID
+}
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+type Card {
+  id: ID!
+  name: String!
+  sourceCard: SourceCard
+  shareCode: String
+  locationTypes: [LocationType!]!
+  locationCuisineTypes: [CuisineType!]!
+  dishTypes: [DishType!]!
+  courseTypes: [CourseType!]!
+  diets: [Diet!]!
+  excludedIngredients: [Ingredient!]!
+  minPrice: Int
+  maxPrice: Int
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input CardFiltersInput {
+  locationTypeIds: [ID!]!
+  locationCuisineTypeIds: [ID!]!
+  dishTypeIds: [ID!]!
+  courseTypeIds: [ID!]!
+  excludedIngredientIds: [ID!]!
+  minPrice: Int
+  maxPrice: Int
+}
+
+input CardInput {
+  name: NonEmptyString!
+  locationTypeIds: [ID!]!
+  locationCuisineTypeIds: [ID!]!
+  dishTypeIds: [ID!]!
+  courseTypeIds: [ID!]!
+  dietIds: [ID!]!
+  excludedIngredientIds: [ID!]!
+  minPrice: Int
+  maxPrice: Int
+}
+
+type Coordinates {
+  lat: Float!
+  lon: Float!
+}
+
+input CoordinatesInput {
+  lat: Float!
+  lon: Float!
+}
+
+type CourseType {
+  id: ID!
+  parentId: ID
+  name: String!
+  idPath: [ID!]!
+  namePath: [String!]!
+  level: Int!
+}
+
+type CourseTypeBase {
+  id: ID!
+  parentId: ID
+  name: String!
+}
+
+type CourseTypeTree {
+  courseType: CourseType!
+  children: [CourseTypeTree!]
+}
+
+type CuisineType {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+  idPath: [ID!]!
+  namePath: [String!]!
+  level: Int!
+}
+
+type CuisineTypeBase {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+}
+
+type CuisineTypeTree {
+  cuisineType: CuisineType!
+  children: [CuisineTypeTree!]
+}
+
+scalar DateTime
+
+type Diet {
+  id: ID!
+  categoryId: ID!
+  name: String!
+  position: Int!
+  excludedAllergenIds: [ID!]!
+  excludedIngredientIds: [ID!]!
+}
+
+type DietBase {
+  id: ID!
+  categoryId: ID!
+  name: String!
+  position: Int!
+}
+
+type DietCategory {
+  id: ID!
+  name: String!
+}
+
+type DietCategoryWithDiets {
+  id: ID!
+  name: String!
+  diets: [Diet!]!
+}
+
+type DietWithCategory {
+  id: ID!
+  categoryId: ID!
+  name: String!
+  position: Int!
+  excludedAllergenIds: [ID!]!
+  excludedIngredientIds: [ID!]!
+  category: DietCategory!
+}
+
+type DishCountForDishType {
+  dishType: DishType!
+  dishCount: Int!
+}
+
+type DishCountForLocationCuisineType {
+  locationCuisineType: CuisineType!
+  dishCount: Int!
+}
+
+type DishCountForLocationType {
+  locationType: LocationType!
+  dishCount: Int!
+}
+
+type DishDetails {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  definiteIngredients: [IngredientBase!]!
+  probableIngredients: [IngredientBase!]!
+  choiceIngredients: [IngredientBase!]!
+  definiteAllergens: [Allergen!]!
+  probableAllergens: [Allergen!]!
+  definiteDiets: [DietBase!]!
+  locations: [Location!]!
+  rating: DishRating
+}
+
+type DishDetailsForCard {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  compatibleWithCard: Boolean!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  definiteIngredients: [IngredientBase!]!
+  probableIngredients: [IngredientForCard!]!
+  choiceIngredients: [IngredientForCard!]!
+  definiteAllergens: [Allergen!]!
+  probableAllergens: [Allergen!]!
+  definiteDiets: [DietBase!]!
+  probableDiets: [DietBase!]!
+  locations: [Location!]!
+  rating: DishRating
+}
+
+type DishListForCard {
+  dishes: [DishOnListForCard!]!
+  total: Int!
+}
+
+type DishListForRated {
+  dishes: [DishOnListForRated!]!
+  total: Int!
+}
+
+type DishListForViewed {
+  dishes: [DishOnListForViewed!]!
+  total: Int!
+}
+
+type DishOnListForCard {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  compatibleWithCard: Boolean!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  location: Location!
+  rating: DishRating
+}
+
+type DishOnListForRated {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  location: Location!
+  rating: DishRating!
+}
+
+type DishOnListForViewed {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  location: Location!
+  rating: DishRating
+  view: DishView!
+}
+
+type DishOnMenu {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  rating: DishRating
+}
+
+type DishOnMenuForCard {
+  id: ID!
+  name: String!
+  description: String
+  choiceTexts: [String!]!
+  lowPrice: Float
+  highPrice: Float
+  avgRating: Rating
+  ratingCount: Int!
+  scrapedAt: DateTime!
+  compatibleWithCard: Boolean!
+  menuTitlePath: [MenuTitle!]!
+  dishType: DishTypeBase!
+  courseType: CourseTypeBase!
+  rating: DishRating
+}
+
+type DishRating {
+  userId: ID!
+  dishId: ID!
+  rating: Rating!
+  createdAt: DateTime!
+}
+
+enum DishSortOrder {
+  RATING
+  DISTANCE
+}
+
+type DishType {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+  idPath: [ID!]!
+  namePath: [String!]!
+  level: Int!
+}
+
+type DishTypeBase {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+}
+
+type DishTypeTree {
+  dishType: DishType!
+  children: [DishTypeTree!]
+}
+
+type DishView {
+  userId: ID!
+  dishId: ID!
+  createdAt: DateTime!
+}
+
+scalar EmailAddress
+
+type Ingredient {
+  id: ID!
+  parentId: ID
+  name: String!
+  idPath: [ID!]!
+  namePath: [String!]!
+  hasComponents: Boolean!
+  level: Int!
+}
+
+type IngredientBase {
+  id: ID!
+  parentId: ID
+  name: String!
+  hasComponents: Boolean!
+}
+
+type IngredientForCard {
+  id: ID!
+  parentId: ID
+  name: String!
+  hasComponents: Boolean!
+  compatibleWithCard: Boolean!
+}
+
+type IngredientTree {
+  ingredient: Ingredient!
+  children: [IngredientTree!]
+}
+
+scalar Limit
+
+scalar LocalTime
+
+type Location {
+  id: ID!
+  name: String!
+  avgRating: Rating
+  phone: String
+  website: String
+  address: String!
+  shortAddress: String!
+  neighbourhood: String!
+  coordinates: Coordinates!
+  distance: Float!
+  locationType: LocationTypeBase!
+  cuisineType: CuisineTypeBase!
+  workingHours: [WorkingHoursForDayOfWeek!]!
+}
+
+type LocationDetails {
+  id: ID!
+  name: String!
+  avgRating: Rating
+  phone: String
+  website: String
+  address: String!
+  shortAddress: String!
+  neighbourhood: String!
+  coordinates: Coordinates!
+  distance: Float!
+  locationType: LocationTypeBase!
+  cuisineType: CuisineTypeBase!
+  workingHours: [WorkingHoursForDayOfWeek!]!
+  menu: [MenuSection!]!
+}
+
+type LocationDetailsForCard {
+  id: ID!
+  name: String!
+  avgRating: Rating
+  phone: String
+  website: String
+  address: String!
+  shortAddress: String!
+  neighbourhood: String!
+  coordinates: Coordinates!
+  distance: Float!
+  locationType: LocationTypeBase!
+  cuisineType: CuisineTypeBase!
+  workingHours: [WorkingHoursForDayOfWeek!]!
+  menuForCard: [MenuSectionForCard!]!
+  menu: [MenuSection!]!
+}
+
+type LocationListForCard {
+  locations: [LocationOnListForCard!]!
+  total: Int!
+}
+
+type LocationListForViewed {
+  locations: [LocationOnListForViewed!]!
+  total: Int!
+}
+
+type LocationOnListForCard {
+  id: ID!
+  name: String!
+  avgRating: Rating
+  phone: String
+  website: String
+  address: String!
+  shortAddress: String!
+  neighbourhood: String!
+  coordinates: Coordinates!
+  distance: Float!
+  locationType: LocationTypeBase!
+  cuisineType: CuisineTypeBase!
+  workingHours: [WorkingHoursForDayOfWeek!]!
+  dishTotalForCard: Int!
+}
+
+type LocationOnListForViewed {
+  id: ID!
+  name: String!
+  avgRating: Rating
+  phone: String
+  website: String
+  address: String!
+  shortAddress: String!
+  neighbourhood: String!
+  coordinates: Coordinates!
+  distance: Float!
+  locationType: LocationTypeBase!
+  cuisineType: CuisineTypeBase!
+  workingHours: [WorkingHoursForDayOfWeek!]!
+  dishTotal: Int!
+  view: LocationView!
+}
+
+type LocationSearchResultsForCard {
+  locationsForCard: [LocationOnListForCard!]!
+  locations: [Location!]!
+}
+
+enum LocationSortOrder {
+  RATING
+  DISTANCE
+}
+
+type LocationType {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+  idPath: [ID!]!
+  namePath: [String!]!
+  level: Int!
+}
+
+type LocationTypeBase {
+  id: ID!
+  parentId: ID
+  name: String!
+  imagePath: String
+}
+
+type LocationTypeTree {
+  locationType: LocationType!
+  children: [LocationTypeTree!]
+}
+
+type LocationView {
+  userId: ID!
+  locationId: ID!
+  createdAt: DateTime!
+}
+
+type MenuSection {
+  menuTitle: MenuTitle
+  dishes: [DishOnMenu!]!
+  menuSections: [MenuSection!]!
+}
+
+type MenuSectionForCard {
+  menuTitle: MenuTitle
+  dishes: [DishOnMenuForCard!]!
+  menuSections: [MenuSectionForCard!]!
+}
+
+type MenuTitle {
+  id: ID!
+  parentId: ID
+  name: String!
+  description: String
+}
+
+type Mutation {
+  signUpWithEmail(
+    name: NonEmptyString!
+    email: EmailAddress!
+    password: Password!
+  ): UserAndTokens!
+  loginWithEmail(
+    email: EmailAddress!
+    password: NonEmptyString!
+  ): UserAndTokens!
+  signUpWithFacebook(
+    facebookAccessToken: NonEmptyString!
+    email: EmailAddress!
+  ): UserAndTokens!
+  loginWithFacebook(facebookAccessToken: NonEmptyString!): UserAndTokens!
+  connectFacebookAccount(facebookAccessToken: NonEmptyString!): User!
+  signUpWithGoogle(googleIdToken: NonEmptyString!): UserAndTokens!
+  loginWithGoogle(googleIdToken: NonEmptyString!): UserAndTokens!
+  signUpWithApple(
+    appleIdToken: NonEmptyString!
+    name: NonEmptyString!
+  ): UserAndTokens!
+  loginWithApple(appleIdToken: NonEmptyString!): UserAndTokens!
+  refreshAccessToken(refreshToken: NonEmptyString!): String!
+  sendResetPasswordToken(email: EmailAddress!): Void
+  resetPassword(
+    email: EmailAddress!
+    code: NonEmptyString!
+    password: Password!
+  ): UserAndTokens!
+  sendChangePasswordToken: Void
+  changePassword(code: NonEmptyString!, password: Password!): Void
+  updateUser(name: NonEmptyString!, email: EmailAddress!): User!
+  deleteUser: Void
+  createCard(data: CardInput!): Card!
+  updateCard(id: ID!, data: CardInput!): Card!
+  shareCard(id: ID!): String!
+  unshareCard(id: ID!): Void
+  duplicateCard(id: ID!): Card!
+  duplicateSharedCard(shareCode: String!): Card!
+  deleteCard(id: ID!): Void
+  rateDish(id: ID!, rating: Rating!): RateDishResponse!
+  viewDish(id: ID!): Void
+  viewLocation(id: ID!): Void
+}
+
+scalar NonEmptyString
+
+scalar Offset
+
+input PaginationInput {
+  offset: Offset!
+  limit: Limit!
+}
+
+scalar Password
+
+type Query {
+  isExistingUserByEmail(email: EmailAddress!): Boolean!
+  isExistingUserByFacebookId(facebookId: String!): Boolean!
+  isExistingUserByGoogleId(googleId: String!): Boolean!
+  isExistingUserByAppleId(appleId: String!): Boolean!
+  user: User!
+  locationTypeTree: [LocationTypeTree!]!
+  searchLocationTypes(searchTerm: String!, limit: Limit!): [LocationType!]!
+  cuisineTypeTree: [CuisineTypeTree!]!
+  searchCuisineTypes(searchTerm: String!, limit: Limit!): [CuisineType!]!
+  dishTypeTree: [DishTypeTree!]!
+  searchDishTypes(searchTerm: String!, limit: Limit!): [DishType!]!
+  courseTypeTree: [CourseTypeTree!]!
+  searchCourseTypes(searchTerm: String!, limit: Limit!): [CourseType!]!
+  ingredientTree: [IngredientTree!]!
+  searchIngredients(searchTerm: String!, limit: Limit!): [Ingredient!]!
+  ingredientComponentIngredientsForCard(
+    id: ID!
+    cardId: ID!
+  ): [IngredientForCard!]!
+  ingredientComponentIngredients(id: ID!): [Ingredient!]!
+  dietCategories: [DietCategoryWithDiets!]!
+  searchDiets(searchTerm: String!, limit: Limit!): [DietWithCategory!]!
+  card(id: ID!): Card!
+  sharedCard(shareCode: NonEmptyString!): SharedCard!
+  cards: [Card!]!
+  dishCountForFilters(
+    cardFilters: CardFiltersInput!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): Int!
+  dishCountsByLocationTypeForCard(
+    cardId: ID!
+    locationTypeId: ID
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): [DishCountForLocationType!]!
+  dishCountsByLocationCuisineTypeForCard(
+    cardId: ID!
+    locationCuisineTypeId: ID
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): [DishCountForLocationCuisineType!]!
+  dishCountsByDishTypeForCard(
+    cardId: ID!
+    dishTypeId: ID
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): [DishCountForDishType!]!
+  dishesForCard(
+    cardId: ID!
+    browsingFilters: BrowsingFiltersInput!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+    sortOrder: DishSortOrder!
+    pagination: PaginationInput!
+  ): DishListForCard!
+  ratedDishes(
+    sortOrder: RatedDishSortOrder!
+    coordinates: CoordinatesInput!
+    pagination: PaginationInput!
+  ): DishListForRated!
+  viewedDishes(
+    sortOrder: ViewedDishSortOrder!
+    coordinates: CoordinatesInput!
+    pagination: PaginationInput!
+  ): DishListForViewed!
+  dishDetailsForCard(
+    id: ID!
+    cardId: ID!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): DishDetailsForCard!
+  dishDetails(
+    id: ID!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+  ): DishDetails!
+  neighbourhood(coordinates: CoordinatesInput!): String!
+  locationsForCard(
+    cardId: ID!
+    browsingFilters: BrowsingFiltersInput!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+    sortOrder: DishSortOrder!
+    pagination: PaginationInput!
+  ): LocationListForCard!
+  searchLocationsForCard(
+    searchTerm: NonEmptyString!
+    cardId: ID!
+    browsingFilters: BrowsingFiltersInput!
+    timeAndLocationFilters: TimeAndLocationFiltersInput!
+    coordinates: CoordinatesInput!
+    sortOrder: DishSortOrder!
+    limit: Limit!
+  ): LocationSearchResultsForCard!
+  viewedLocations(
+    coordinates: CoordinatesInput!
+    sortOrder: ViewedDishSortOrder!
+    pagination: PaginationInput!
+  ): LocationListForViewed!
+  locationDetailsForCard(
+    id: ID!
+    cardId: ID!
+    coordinates: CoordinatesInput!
+  ): LocationDetailsForCard!
+  locationDetails(id: ID!, coordinates: CoordinatesInput!): LocationDetails!
+}
+
+enum RatedDishSortOrder {
+  RATING
+  DISTANCE
+  TIME
+}
+
+type RateDishResponse {
+  avgRating: Float!
+  ratingCount: Int!
+}
+
+scalar Rating
+
+type SharedCard {
+  id: ID!
+  name: String!
+  shareCode: String!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+type SourceCard {
+  id: ID!
+  name: String!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input TimeAndLocationFiltersInput {
+  maxDistance: Int
+  openAt: DateTime
+}
+
+scalar Upload
+
+scalar URL
+
+type User {
+  id: ID!
+  name: String!
+  email: EmailAddress!
+  facebookId: String
+  googleId: String
+  appleId: String
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+type UserAndTokens {
+  user: User!
+  accessToken: String!
+  refreshToken: String!
+}
+
+enum ViewedDishSortOrder {
+  RATING
+  DISTANCE
+  TIME
+}
+
+enum ViewedLocationSortOrder {
+  RATING
+  DISTANCE
+  TIME
+}
+
+scalar Void
+
+type WorkingHoursForDayOfWeek {
+  dayOfWeek: Int!
+  intervals: [WorkingHoursInterval!]!
+}
+
+type WorkingHoursInterval {
+  openTime: LocalTime!
+  closeTime: LocalTime!
+}
